@@ -80,7 +80,7 @@ extension ConfigurationAppIntent {
     }
 }
 
-#Preview(as: .systemSmall) {
+#Preview(as: .systemMedium) {
     RemindersWidget()
 } timeline: {
     SimpleEntry(date: .now, configuration: .smiley)
