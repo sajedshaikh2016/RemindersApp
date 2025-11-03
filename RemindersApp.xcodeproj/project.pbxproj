@@ -61,6 +61,7 @@
 		B41C1BEC2EB8D2A60013AFB6 /* Exceptions for "RemindersApp" folder in "RemindersWidgetExtension" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				MarkReminderDoneIntent.swift,
 				Reminder.swift,
 			);
 			target = B41C1BC42EB8CB850013AFB6 /* RemindersWidgetExtension */;

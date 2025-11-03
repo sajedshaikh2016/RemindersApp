@@ -7,6 +7,7 @@
 
 import WidgetKit
 import SwiftUI
+import AppIntents
 
 struct Provider: AppIntentTimelineProvider {
     func placeholder(in context: Context) -> SimpleEntry {
@@ -37,9 +38,8 @@ struct Provider: AppIntentTimelineProvider {
 }
 
 let sampleReminders = [
-    MyReminder(title: "do DSA", date: Date()),
-    MyReminder(title: "take a nap", date: Date()),
-    MyReminder(title: "work on the project", date: Date())
+    MyReminder(title: "Take a nap", date: Date()),
+    MyReminder(title: "Work on the project", date: Date())
 ]
 
 struct SimpleEntry: TimelineEntry {
@@ -48,54 +48,66 @@ struct SimpleEntry: TimelineEntry {
     let reminders: [MyReminder]
 }
 
-struct RemindersWidgetEntryView : View {
+struct RemindersWidgetEntryView: View {
     var entry: Provider.Entry
 
     var body: some View {
-        ZStack(alignment: .topLeading) {
-            RoundedRectangle(cornerRadius: 16)
-                .fill(Color.black)
+        
+        ZStack {
             
-            VStack(alignment: .leading, spacing: 8) {
-                Text("{ }")
-                    .foregroundColor(.orange)
-                    .font(.title)
-                Text("\(entry.reminders.count)")
-                    .font(.system(size: 40, weight: .bold))
-                    .foregroundColor(.white)
-                Text("Reminders")
-                    .foregroundColor(.orange)
+            HStack {
+                VStack(spacing: 2, content: {
+                    Text("{ }")
+                        .foregroundColor(.orange)
+                        .font(.title)
+                    Text("\(entry.reminders.count)")
+                        .font(.system(size: 50, weight: .heavy))
+                        .fontWeight(.bold)
+                        .foregroundColor(.white.opacity(0.6))
+                    Text("Reminders")
+                        .font(.title3)
+                        .foregroundColor(.orange)
+                })
                 
-                ForEach(entry.reminders.prefix(3), id: \.title) { reminder in
-                    HStack {
-                        Circle()
-                            .stroke(Color.white, lineWidth: 1)
-                            .frame(width: 12, height: 12)
-                        Text(reminder.title)
-                            .foregroundColor(.white)
-                            .font(.callout)
-                        Spacer()
-                        Text(reminder.date, style: .time)
-                            .foregroundColor(.gray)
+                VStack(spacing: 2, content: {
+                    ForEach(entry.reminders.prefix(3)) { reminder in
+                        HStack {
+                            Button(intent: MarkReminderDoneIntent(id: .init(title: LocalizedStringResource(stringLiteral: reminder.id.uuidString)))) {
+                                Image(systemName: reminder.isCompleted ? "checkmark.circle.fill" : "circle")
+                                    .foregroundColor(reminder.isCompleted ? .orange : .gray)
+                                    .frame(width: 20, height: 20)
+                            }
+                            .buttonStyle(.plain)
+
+                            Text(reminder.title)
+                                .foregroundColor(reminder.isCompleted ? .gray : .white)
+                                .strikethrough(reminder.isCompleted)
+
+                            Spacer()
+                            Text(reminder.date, style: .time)
+                                .foregroundColor(.gray)
+                        }
                     }
-                }
+                })
             }
-            .padding()
+            
         }
+        
     }
 }
 
 struct RemindersWidget: Widget {
     let kind: String = "RemindersWidget"
-
     var body: some WidgetConfiguration {
-        AppIntentConfiguration(kind: kind, intent: ConfigurationAppIntent.self, provider: Provider()) { entry in
+        AppIntentConfiguration(kind: kind,
+                               intent: ConfigurationAppIntent.self,
+                               provider: Provider()) { entry in
             RemindersWidgetEntryView(entry: entry)
-                .containerBackground(.fill.tertiary, for: .widget)
+                .containerBackground(.black, for: .widget)
         }
         .configurationDisplayName("Reminders")
         .description("Stay on top of your tasks.")
-        .supportedFamilies([.systemSmall, .systemMedium])
+        .supportedFamilies([.systemMedium])
     }
 }
 
