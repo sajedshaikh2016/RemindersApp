@@ -10,11 +10,11 @@ import SwiftUI
 
 struct Provider: AppIntentTimelineProvider {
     func placeholder(in context: Context) -> SimpleEntry {
-        SimpleEntry(date: Date(), configuration: ConfigurationAppIntent())
+        SimpleEntry(date: Date(), configuration: ConfigurationAppIntent(), reminders: sampleReminders)
     }
 
     func snapshot(for configuration: ConfigurationAppIntent, in context: Context) async -> SimpleEntry {
-        SimpleEntry(date: Date(), configuration: configuration)
+        SimpleEntry(date: Date(), configuration: configuration, reminders: sampleReminders)
     }
     
     func timeline(for configuration: ConfigurationAppIntent, in context: Context) async -> Timeline<SimpleEntry> {
@@ -24,7 +24,7 @@ struct Provider: AppIntentTimelineProvider {
         let currentDate = Date()
         for hourOffset in 0 ..< 5 {
             let entryDate = Calendar.current.date(byAdding: .hour, value: hourOffset, to: currentDate)!
-            let entry = SimpleEntry(date: entryDate, configuration: configuration)
+            let entry = SimpleEntry(date: entryDate, configuration: configuration, reminders: sampleReminders)
             entries.append(entry)
         }
 
@@ -36,21 +36,51 @@ struct Provider: AppIntentTimelineProvider {
 //    }
 }
 
+let sampleReminders = [
+    MyReminder(title: "do DSA", date: Date()),
+    MyReminder(title: "take a nap", date: Date()),
+    MyReminder(title: "work on the project", date: Date())
+]
+
 struct SimpleEntry: TimelineEntry {
     let date: Date
     let configuration: ConfigurationAppIntent
+    let reminders: [MyReminder]
 }
 
 struct RemindersWidgetEntryView : View {
     var entry: Provider.Entry
 
     var body: some View {
-        VStack {
-            Text("Time:")
-            Text(entry.date, style: .time)
-
-            Text("Favorite Emoji:")
-            Text(entry.configuration.favoriteEmoji)
+        ZStack(alignment: .topLeading) {
+            RoundedRectangle(cornerRadius: 16)
+                .fill(Color.black)
+            
+            VStack(alignment: .leading, spacing: 8) {
+                Text("{ }")
+                    .foregroundColor(.orange)
+                    .font(.title)
+                Text("\(entry.reminders.count)")
+                    .font(.system(size: 40, weight: .bold))
+                    .foregroundColor(.white)
+                Text("Reminders")
+                    .foregroundColor(.orange)
+                
+                ForEach(entry.reminders.prefix(3), id: \.title) { reminder in
+                    HStack {
+                        Circle()
+                            .stroke(Color.white, lineWidth: 1)
+                            .frame(width: 12, height: 12)
+                        Text(reminder.title)
+                            .foregroundColor(.white)
+                            .font(.callout)
+                        Spacer()
+                        Text(reminder.date, style: .time)
+                            .foregroundColor(.gray)
+                    }
+                }
+            }
+            .padding()
         }
     }
 }
@@ -63,6 +93,9 @@ struct RemindersWidget: Widget {
             RemindersWidgetEntryView(entry: entry)
                 .containerBackground(.fill.tertiary, for: .widget)
         }
+        .configurationDisplayName("Reminders")
+        .description("Stay on top of your tasks.")
+        .supportedFamilies([.systemSmall, .systemMedium])
     }
 }
 
@@ -83,6 +116,7 @@ extension ConfigurationAppIntent {
 #Preview(as: .systemMedium) {
     RemindersWidget()
 } timeline: {
-    SimpleEntry(date: .now, configuration: .smiley)
-    SimpleEntry(date: .now, configuration: .starEyes)
+    SimpleEntry(date: .now, configuration: .smiley, reminders: sampleReminders)
+    SimpleEntry(date: .now, configuration: .starEyes, reminders: sampleReminders)
 }
+

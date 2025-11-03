@@ -51,17 +51,35 @@
 			);
 			target = B41C1BC42EB8CB850013AFB6 /* RemindersWidgetExtension */;
 		};
+		B41C1BEA2EB8D2880013AFB6 /* Exceptions for "RemindersWidget" folder in "RemindersApp" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				ReminderStore.swift,
+			);
+			target = B41C1BB22EB8CB070013AFB6 /* RemindersApp */;
+		};
+		B41C1BEC2EB8D2A60013AFB6 /* Exceptions for "RemindersApp" folder in "RemindersWidgetExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Reminder.swift,
+			);
+			target = B41C1BC42EB8CB850013AFB6 /* RemindersWidgetExtension */;
+		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		B41C1BB52EB8CB070013AFB6 /* RemindersApp */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				B41C1BEC2EB8D2A60013AFB6 /* Exceptions for "RemindersApp" folder in "RemindersWidgetExtension" target */,
+			);
 			path = RemindersApp;
 			sourceTree = "<group>";
 		};
 		B41C1BCB2EB8CB850013AFB6 /* RemindersWidget */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
+				B41C1BEA2EB8D2880013AFB6 /* Exceptions for "RemindersWidget" folder in "RemindersApp" target */,
 				B41C1BDC2EB8CB880013AFB6 /* Exceptions for "RemindersWidget" folder in "RemindersWidgetExtension" target */,
 			);
 			path = RemindersWidget;
